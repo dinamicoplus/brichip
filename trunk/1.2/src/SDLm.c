@@ -31,7 +31,9 @@ int main (int argc, char *argv[])
 	atexit(SDL_Quit);
 	if ((ptrGame=fopen(argv[1],"rb"))==NULL)
 	{
-		printf("No se puede abrir el archivo\n");
+		printf("Can't open the file\n");
+		printf("Usage %s <rom file> ",argv[0]);
+		getchar();
 	}
 	else
 	{
