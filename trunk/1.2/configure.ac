@@ -15,10 +15,10 @@ case "$host" in
     *-*-mingw32*)
 	LDFLAGS="-lSDL"
 	LIBS="$srcdir/src/win/SDL_win32_main.c"
+	OUTPUT_FORMAT=".exe"
 	;;
     *)
 	LDFLAGS="-lSDL -lSDLmain"
-	OUTPUT_FORMAT=".exe"
 	;;
 esac
 AC_SUBST([CFLAGS],[$CFLAGS])
