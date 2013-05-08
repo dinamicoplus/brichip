@@ -1,0 +1,16 @@
+TARGET=@PACKAGE_NAME@
+VERSION=@PACKAGE_VERSION@
+HOST=@HOST@
+srcdir=@srcdir@
+CFLAGS=@CFLAGS@
+LDFLAGS=@LDFLAGS@
+INCLUDES=@INCLUDES@
+LIBS=@LIBS@
+OUTPUT_FORMAT=@OUTPUT_FORMAT@
+
+all:
+	test -d bin || mkdir bin
+	gcc $(CFLAGS) $(INCLUDES) -o bin/$(TARGET)-$(VERSION)$(OUTPUT_FORMAT) $(srcdir)/src/SDLm.c $(srcdir)/src/chip8.c $(LIBS) $(LDFLAGS)
+
+clean:
+	rm -r bin

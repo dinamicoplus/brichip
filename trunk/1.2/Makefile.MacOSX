@@ -1,5 +1,0 @@
-all:
-	mkdir bin
-	gcc -ObjC -Iinclude -Isrc/macosx -framework Cocoa -o bin/brichip-1.1 src/SDLm.c src/chip8.c lib/libSDL-1.2.0.dylib src/macosx/SDLmain.m
-clean:
-	rm -r bin
