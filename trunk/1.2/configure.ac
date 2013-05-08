@@ -14,7 +14,7 @@ case "$host" in
 	;;
     *-*-mingw32*)
 	LDFLAGS="-lSDL"
-	LIBS="$srcdir/src/win/SDL_win32_main.o"
+	LIBS="$srcdir/src/win/SDL_win32_main.c"
 	;;
     *)
 	LDFLAGS="-lSDL -lSDLmain"
