@@ -18,6 +18,7 @@ case "$host" in
 	;;
     *)
 	LDFLAGS="-lSDL -lSDLmain"
+	OUTPUT_FORMAT=".exe"
 	;;
 esac
 AC_SUBST([CFLAGS],[$CFLAGS])
