@@ -7,6 +7,9 @@
 
 #include "SDL.h"
 #include "SDLMain.h"
+#include "../chip8.h"	//Attach the libraries for the emulator
+#include "../SDLm.h"	//Attach the libraries for the SDL
+#include "../config.h"
 #include <sys/param.h> /* for MAXPATHLEN */
 #include <unistd.h>
 
@@ -17,8 +20,6 @@
 - (void)setAppleMenu:(NSMenu *)menu;
 @end
 
-/* Use this flag to determine whether we use SDLMain.nib or not */
-#define		SDL_USE_NIB_FILE	0
 
 /* Use this flag to determine whether we use CPS (docking) or not */
 #define		SDL_USE_CPS		0
@@ -57,7 +58,7 @@ static NSString *getApplicationName(void)
     return appName;
 }
 
-#if SDL_USE_NIB_FILE
+#ifdef SDL_USE_NIB_FILE
 /* A helper category for NSString */
 @interface NSString (ReplaceSubString)
 - (NSString *)stringByReplacingRange:(NSRange)aRange with:(NSString *)aString;
@@ -75,6 +76,9 @@ static NSString *getApplicationName(void)
     SDL_Event event;
     event.type = SDL_QUIT;
     SDL_PushEvent(&event);
+#ifdef SDL_USE_NIB_FILE
+	exit(0);			//If you use the nib file you must exit here
+#endif
 }
 
 @end
@@ -98,7 +102,7 @@ static NSString *getApplicationName(void)
     }
 }
 
-#if SDL_USE_NIB_FILE
+#ifdef SDL_USE_NIB_FILE
 
 /* Fix menu to contain the real app name instead of "SDL App" */
 - (void)fixMenu:(NSMenu *)aMenu withAppName:(NSString *)appName
@@ -123,9 +127,10 @@ static NSString *getApplicationName(void)
     [ aMenu sizeToFit ];
 }
 
-- (IBAction) openDialog: sender
+- (IBAction) openDialog: sender			//Implementation for the open dialog
 {
 	int i; // Loop counter.
+	const char *str[2];					//Use two strings for emulate the input parameters
 	
 	// Create the File Open Dialog class.
 	NSOpenPanel* openDlg = [NSOpenPanel openPanel];
@@ -148,6 +153,8 @@ static NSString *getApplicationName(void)
 		for( i = 0; i < [files count]; i++ )
 		{
 			NSString* fileName = [files objectAtIndex:i];
+			str[1] = [fileName UTF8String];					//Assign to str[1] the name of the file picked
+			SDL_main(1,str);								//The main function in ../SDLm.c
 			// Do something with the filename.
 		}
 	}
@@ -321,7 +328,7 @@ static void CustomApplicationMain (int argc, char **argv)
     /* Set the working directory to the .app's parent directory */
     [self setupWorkingDirectory:gFinderLaunch];
 
-#if SDL_USE_NIB_FILE
+#ifdef SDL_USE_NIB_FILE
     /* Set the main menu to contain the real app name instead of "SDL App" */
     [self fixMenu:[NSApp mainMenu] withAppName:getApplicationName()];
 #endif
@@ -331,7 +338,9 @@ static void CustomApplicationMain (int argc, char **argv)
     status = SDL_main (gArgc, gArgv);
 
     /* We're done, thank you for playing */
-    exit(status);
+#ifndef SDL_USE_NIB_FILE
+    exit(status);			//If you use the nib file then you delete the exit() function
+#endif
 }
 @end
 
@@ -402,7 +411,7 @@ int main (int argc, char **argv)
         gFinderLaunch = NO;
     }
 
-#if SDL_USE_NIB_FILE
+#ifdef SDL_USE_NIB_FILE
     [SDLApplication poseAsClass:[NSApplication class]];
     NSApplicationMain (argc, (const char **)argv);
 #else

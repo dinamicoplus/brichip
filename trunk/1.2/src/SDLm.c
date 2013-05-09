@@ -8,39 +8,24 @@
 #include <stdlib.h>
 #include "chip8.h"
 #include <SDL/SDL.h>
+#include "SDLm.h"
 
-int InitSDL(SDL_Surface **screen);
-int OpenGame(struct chip8_state *s, char **argv);
-int MainSDL(struct chip8_state *s, SDL_Surface **screen);
-int putpix(int pix,int n,int m,SDL_Surface *screen);
-int drawscrn (struct chip8_state *s,SDL_Surface *screen);
-char keypressed();
-Uint8 *keys;
-int ini_milisegundos;
-int fin_milisegundos;
-int frametime;
-int CurrentTime();
-void ResetTimeBase();
-FILE *ptrGame;
 
-int main (int argc, char *argv[])
+int main (int argc, char *argv[]) //<-- Esta funcion luego la cambian de nombre por SDL_main
 {
 	SDL_Surface *screen;
 	struct chip8_state s;
-	
-	init(&s);
-	atexit(SDL_Quit);
-	InitSDL(&screen);
-	if(OpenGame(&s,argv)) MainSDL(&s,&screen);
+	init(&s);										// Inicializa el estado del emulador
+	InitSDL(&screen);								// Inicia la pantalla
+	if(OpenGame(&s,argv[1])) MainSDL(&s,&screen);	// Si lo lee ejecuta el juego
 	return 0;
 }
 
-int OpenGame(struct chip8_state *s, char **argv)
+int OpenGame(struct chip8_state *s, char *argv)
 {
-	if ((ptrGame=fopen(argv[1],"rb"))==NULL)
+	if ((ptrGame=fopen(argv,"rb"))==NULL)
 	{
 		printf("Can't open the file\n");
-		printf("Usage %s <rom file> \n",argv[0]);
 		return 0;
 	}
 	else
