@@ -11,6 +11,7 @@ typedef unsigned int word;
 struct chip8_state
 {
 	byte data [SIZEMEM];
+	word sizerom;
 	byte scrn[64][32];
 	byte V[16];
 	byte SP;

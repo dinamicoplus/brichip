@@ -21,7 +21,7 @@
 #define		SDL_USE_NIB_FILE	0
 
 /* Use this flag to determine whether we use CPS (docking) or not */
-#define		SDL_USE_CPS		1
+#define		SDL_USE_CPS		0
 #ifdef SDL_USE_CPS
 /* Portions of CPS.h */
 typedef struct CPSProcessSerNum
@@ -64,10 +64,10 @@ static NSString *getApplicationName(void)
 @end
 #endif
 
-@interface NSApplication (SDLApplication)
+@interface SDLApplication : NSApplication
 @end
 
-@implementation NSApplication (SDLApplication)
+@implementation SDLApplication
 /* Invoked from the Quit menu item */
 - (void)terminate:(id)sender
 {
@@ -76,6 +76,7 @@ static NSString *getApplicationName(void)
     event.type = SDL_QUIT;
     SDL_PushEvent(&event);
 }
+
 @end
 
 /* The main class of the application, the application's delegate */
@@ -119,8 +120,38 @@ static NSString *getApplicationName(void)
         if ([menuItem hasSubmenu])
             [self fixMenu:[menuItem submenu] withAppName:appName];
     }
+    [ aMenu sizeToFit ];
 }
 
+- (IBAction) openDialog: sender
+{
+	int i; // Loop counter.
+	
+	// Create the File Open Dialog class.
+	NSOpenPanel* openDlg = [NSOpenPanel openPanel];
+	
+	// Enable the selection of files in the dialog.
+	[openDlg setCanChooseFiles:YES];
+	
+	// Enable the selection of directories in the dialog.
+	[openDlg setCanChooseDirectories:NO];
+	
+	// Display the dialog.  If the OK button was pressed,
+	// process the files.
+	if ( [openDlg runModalForDirectory:nil file:nil] == NSOKButton )
+	{
+		// Get an array containing the full filenames of all
+		// files and directories selected.
+		NSArray* files = [openDlg filenames];
+		
+		// Loop through all the files and process them.
+		for( i = 0; i < [files count]; i++ )
+		{
+			NSString* fileName = [files objectAtIndex:i];
+			// Do something with the filename.
+		}
+	}
+}
 #else
 
 static void setApplicationMenu(void)
@@ -201,7 +232,7 @@ static void CustomApplicationMain (int argc, char **argv)
     SDLMain				*sdlMain;
 
     /* Ensure the application object is initialised */
-    [NSApplication sharedApplication];
+    [SDLApplication sharedApplication];
     
 #ifdef SDL_USE_CPS
     {
@@ -210,7 +241,7 @@ static void CustomApplicationMain (int argc, char **argv)
         if (!CPSGetCurrentProcess(&PSN))
             if (!CPSEnableForegroundOperation(&PSN,0x03,0x3C,0x2C,0x1103))
                 if (!CPSSetFrontProcess(&PSN))
-                    [NSApplication sharedApplication];
+                    [SDLApplication sharedApplication];
     }
 #endif /* SDL_USE_CPS */
 
@@ -372,7 +403,8 @@ int main (int argc, char **argv)
     }
 
 #if SDL_USE_NIB_FILE
-    NSApplicationMain (argc, argv);
+    [SDLApplication poseAsClass:[NSApplication class]];
+    NSApplicationMain (argc, (const char **)argv);
 #else
     CustomApplicationMain (argc, argv);
 #endif

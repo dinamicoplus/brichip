@@ -11,6 +11,9 @@
 #import <Cocoa/Cocoa.h>
 
 @interface SDLMain : NSObject
+#ifdef SDL_USE_NIB_FILE
+- (IBAction) openDialog: sender;
+#endif
 @end
 
 #endif /* _SDLMain_h_ */

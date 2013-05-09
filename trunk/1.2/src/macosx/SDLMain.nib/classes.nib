@@ -15,9 +15,21 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
-				<key>makeFullscreen</key>
+				<key>help</key>
 				<string>id</string>
-				<key>quit</key>
+				<key>newGame</key>
+				<string>id</string>
+				<key>openDialog</key>
+				<string>id</string>
+				<key>openFile</key>
+				<string>id</string>
+				<key>openGame</key>
+				<string>id</string>
+				<key>prefsMenu</key>
+				<string>id</string>
+				<key>saveGame</key>
+				<string>id</string>
+				<key>saveGameAs</key>
 				<string>id</string>
 			</dict>
 			<key>CLASS</key>

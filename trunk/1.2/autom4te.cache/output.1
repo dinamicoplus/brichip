@@ -3362,6 +3362,7 @@ case "$host" in
 	INCLUDES="-Iinclude -I$srcdir/src/macox"
 	LDFLAGS="-framework Cocoa"
 	LIBS="$srcdir/lib/libSDL-1.2.0.dylib $srcdir/src/macosx/SDLmain.m"
+	AUX=src/macosx/Info.plist:src/macosx/Info.plist.in
 	;;
     *-*-mingw32*)
 	LDFLAGS="-lSDL"
@@ -3382,7 +3383,7 @@ LIBS=$LIBS
 
 OUTPUT_FORMAT=$OUTPUT_FORMAT
 
-ac_config_files="$ac_config_files Makefile:Makefile.in"
+ac_config_files="$ac_config_files Makefile:Makefile.in $AUX"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3978,6 +3979,7 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile:Makefile.in" ;;
+    "$AUX") CONFIG_FILES="$CONFIG_FILES $AUX" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

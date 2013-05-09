@@ -11,6 +11,7 @@ case "$host" in
 	INCLUDES="-Iinclude -I$srcdir/src/macox"
 	LDFLAGS="-framework Cocoa"
 	LIBS="$srcdir/lib/libSDL-1.2.0.dylib $srcdir/src/macosx/SDLmain.m"
+	AUX=src/macosx/Info.plist:src/macosx/Info.plist.in
 	;;
     *-*-mingw32*)
 	LDFLAGS="-lSDL"
@@ -26,5 +27,5 @@ AC_SUBST([INCLUDES],[$INCLUDES])
 AC_SUBST([LDFLAGS],[$LDFLAGS])
 AC_SUBST([LIBS],[$LIBS])
 AC_SUBST([OUTPUT_FORMAT],[$OUTPUT_FORMAT])
-AC_CONFIG_FILES([Makefile:Makefile.in])
+AC_CONFIG_FILES([Makefile:Makefile.in $AUX])
 AC_OUTPUT

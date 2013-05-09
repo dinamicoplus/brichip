@@ -9,6 +9,9 @@
 #include "chip8.h"
 #include <SDL/SDL.h>
 
+int InitSDL(SDL_Surface **screen);
+int OpenGame(struct chip8_state *s, char **argv);
+int MainSDL(struct chip8_state *s, SDL_Surface **screen);
 int putpix(int pix,int n,int m,SDL_Surface *screen);
 int drawscrn (struct chip8_state *s,SDL_Surface *screen);
 char keypressed();
@@ -22,80 +25,96 @@ FILE *ptrGame;
 
 int main (int argc, char *argv[])
 {
-	int i;
-	SDL_Event event;
 	SDL_Surface *screen;
 	struct chip8_state s;
 	
 	init(&s);
 	atexit(SDL_Quit);
+	InitSDL(&screen);
+	if(OpenGame(&s,argv)) MainSDL(&s,&screen);
+	return 0;
+}
+
+int OpenGame(struct chip8_state *s, char **argv)
+{
 	if ((ptrGame=fopen(argv[1],"rb"))==NULL)
 	{
 		printf("Can't open the file\n");
-		printf("Usage %s <rom file> ",argv[0]);
-		getchar();
+		printf("Usage %s <rom file> \n",argv[0]);
+		return 0;
 	}
 	else
 	{
-		if (SDL_Init(SDL_INIT_VIDEO)<0)
-		{
-			printf("No se pudo iniciar SDL: %s\n", SDL_GetError());
-			exit(1);
-		}
-		screen=SDL_SetVideoMode(640,320, 8, SDL_HWSURFACE);
-		if (screen == NULL) 
-		{
-			printf("No se puede inicializar el modo gráfico: %s\n",SDL_GetError());
-			exit(1);
-		}
-		i=fread(&(s.data[512]),1,SIZEMEM,ptrGame)+0x200;
-		printf("%d bytes loaded\n", i-0x200);
+		s->sizerom=fread(&(s->data[0x200]),1,SIZEMEM,ptrGame);
+		printf("%d bytes loaded\n", s->sizerom);
 		fclose(ptrGame);
-		#ifdef TODEBUG
+#ifdef TODEBUG
 		int j;
-		for(j=0x200; j<i; j++)
+		for(j=0; j<s->sizerom; j++)
 		{
-			printf("%02X ",s.data[j]);
+			printf("%02X ",s->data[j+0x200]);
 		}
 		printf("\n");
-		#endif
-		int x=0;
-		while(x==0&&s.PC<i+1)
-		{
-			ResetTimeBase();
-			#ifdef TODEBUG
-			printPC(&s);
-			printReg(&s);
-			if(getchar()==27){x=1;}
-			#else
-			while (SDL_PollEvent(&event))
-			{
-				if (event.type == SDL_QUIT) {x=1;}
-				if (event.type == SDL_KEYDOWN) 
-				{
-					if (event.key.keysym.sym == SDLK_ESCAPE) 
-					{
-						x=1;
-					} 
-				}
-			}
-			#endif
-			exec(&s);
-			if(s.draw) drawscrn(&s,screen);
-			s.keypress=keypressed();
-			s.draw=0;
-			s.PC+=2;
-			
-			if(s.DT!=0){s.DT--;}
-			if(s.ST!=0){s.ST--;}
-			
-			do {
-				frametime=CurrentTime();
-			} while (frametime<4);
-		}
+#endif
+		return 1;
+	}
+}
+
+int InitSDL(SDL_Surface **screen)
+{
+	if (SDL_Init(SDL_INIT_VIDEO)<0)
+	{
+		printf("No se pudo iniciar SDL: %s\n", SDL_GetError());
+		exit(1);
+	}
+	*screen=SDL_SetVideoMode(640,320, 8, SDL_HWSURFACE);
+	if (*screen == NULL) 
+	{
+		printf("No se puede inicializar el modo gráfico: %s\n",SDL_GetError());
+		exit(1);
 	}
 	return 0;
-}
+}	
+
+int MainSDL(struct chip8_state *s, SDL_Surface **screen)
+{
+	SDL_Event event;
+	int x=0;
+	while(x==0&&s->PC<s->sizerom+0x201)
+	{
+		ResetTimeBase();
+#ifdef TODEBUG
+		printPC(s);
+		printReg(s);
+		if(getchar()==27){x=1;}
+#else
+		while (SDL_PollEvent(&event))
+		{
+			if (event.type == SDL_QUIT) {x=1;}
+			if (event.type == SDL_KEYDOWN) 
+			{
+				if (event.key.keysym.sym == SDLK_ESCAPE) 
+				{
+					x=1;
+				} 
+			}
+		}
+#endif
+		exec(s);
+		if(s->draw) drawscrn(s,*screen);
+		s->keypress=keypressed();
+		s->draw=0;
+		s->PC+=2;
+		
+		if(s->DT!=0){s->DT--;}
+		if(s->ST!=0){s->ST--;}
+		
+		do {
+			frametime=CurrentTime();
+		} while (frametime<4);
+	}
+}	
+
 int putpix(int pix,int n,int m,SDL_Surface *screen)
 {
 	SDL_Rect bwpix;
@@ -117,6 +136,7 @@ int putpix(int pix,int n,int m,SDL_Surface *screen)
 	}
 	return 0;
 }
+
 int drawscrn (struct chip8_state *s,SDL_Surface *screen)
 {
 	int k,l;
@@ -130,6 +150,7 @@ int drawscrn (struct chip8_state *s,SDL_Surface *screen)
 	SDL_Flip(screen);
 	return 0;
 }
+
 char keypressed()
 {
 	char x;
@@ -154,9 +175,11 @@ char keypressed()
 	if(keys[SDLK_4]==1){ x='4';}
 	return x;
 }
+
 void ResetTimeBase() {
 	ini_milisegundos=SDL_GetTicks();
 }
+
 int CurrentTime() {
 	fin_milisegundos=SDL_GetTicks();
 	return fin_milisegundos-ini_milisegundos;
