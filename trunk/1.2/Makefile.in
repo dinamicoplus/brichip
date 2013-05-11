@@ -7,7 +7,7 @@ LDFLAGS=@LDFLAGS@
 INCLUDES=@INCLUDES@
 LIBS=@LIBS@
 OUTPUT_FORMAT=@OUTPUT_FORMAT@
-EXECUTABLE_NAME=$(TARGET)-$(VERSION)$(OUTPUT_FORMAT)
+EXECUTABLE_NAME=@EXECUTABLE_NAME@
 
 all:
 	test -d bin || mkdir bin
@@ -15,8 +15,4 @@ all:
 
 clean:
 	rm -r bin
-createapp: all
-	test -d bin/$(EXECUTABLE_NAME).app || mkdir bin/$(EXECUTABLE_NAME).app
-	mv bin/$(EXECUTABLE_NAME) bin/$(EXECUTABLE_NAME).app
-	cp -R $(srcdir)/src/macosx/SDLMain.nib bin/$(EXECUTABLE_NAME).app
-	cp $(srcdir)/src/macosx/Info.plist bin/$(EXECUTABLE_NAME).app 
+@EXTRA@

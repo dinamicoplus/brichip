@@ -11,12 +11,19 @@ case "$host" in
 	INCLUDES="-Iinclude -I$srcdir/src/macox"
 	LDFLAGS="-framework Cocoa"
 	LIBS="$srcdir/lib/libSDL-1.2.0.dylib $srcdir/src/macosx/SDLmain.m"
-	AUX=src/macosx/Info.plist:src/macosx/Info.plist.in
+	AUX="src/macosx/Info.plist:src/macosx/Info.plist.in"
+	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
+
 	AC_ARG_ENABLE(gui,
 		AC_HELP_STRING([--enable-gui], [Enable the GUI [[default=yes]]]),
               , enable_gui=yes)
 	if test x$enable_gui == xyes; then
     		AC_DEFINE([SDL_USE_NIB_FILE],[],[Use this flag to determine whether we use SDLMain.nib or not])
+		EXTRA="createapp: all
+	test -d bin/$EXECUTABLE_NAME.app || mkdir bin/$EXECUTABLE_NAME.app
+	mv bin/$EXECUTABLE_NAME bin/$EXECUTABLE_NAME.app
+	cp -R $srcdir/src/macosx/SDLMain.nib bin/$EXECUTABLE_NAME.app
+	cp $srcdir/src/macosx/Info.plist bin/$EXECUTABLE_NAME.app "
 	fi
 	;;
     *-*-mingw32*)
@@ -28,11 +35,12 @@ case "$host" in
 	LDFLAGS="-lSDL -lSDLmain"
 	;;
 esac
-
 AC_SUBST([CFLAGS],[$CFLAGS])
 AC_SUBST([INCLUDES],[$INCLUDES])
 AC_SUBST([LDFLAGS],[$LDFLAGS])
 AC_SUBST([LIBS],[$LIBS])
+AC_SUBST([EXTRA],[$EXTRA])
+AC_SUBST([EXECUTABLE_NAME],[$EXECUTABLE_NAME])
 AC_SUBST([OUTPUT_FORMAT],[$OUTPUT_FORMAT])
 AC_CONFIG_FILES([Makefile:Makefile.in $AUX])
 AC_CONFIG_HEADER([src/config.h])

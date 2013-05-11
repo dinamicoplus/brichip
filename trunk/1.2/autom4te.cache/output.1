@@ -664,6 +664,8 @@ am__fastdepCC_TRUE
 am__fastdepCC_FALSE
 HOST
 INCLUDES
+EXTRA
+EXECUTABLE_NAME
 OUTPUT_FORMAT
 LIB@&t@OBJS
 LTLIBOBJS'
@@ -3363,7 +3365,9 @@ case "$host" in
 	INCLUDES="-Iinclude -I$srcdir/src/macox"
 	LDFLAGS="-framework Cocoa"
 	LIBS="$srcdir/lib/libSDL-1.2.0.dylib $srcdir/src/macosx/SDLmain.m"
-	AUX=src/macosx/Info.plist:src/macosx/Info.plist.in
+	AUX="src/macosx/Info.plist:src/macosx/Info.plist.in"
+	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
+
 	# Check whether --enable-gui was given.
 if test "${enable_gui+set}" = set; then
   enableval=$enable_gui; 
@@ -3377,6 +3381,11 @@ cat >>confdefs.h <<\_ACEOF
 @%:@define SDL_USE_NIB_FILE 
 _ACEOF
 
+		EXTRA="createapp: all
+	test -d bin/$EXECUTABLE_NAME.app || mkdir bin/$EXECUTABLE_NAME.app
+	mv bin/$EXECUTABLE_NAME bin/$EXECUTABLE_NAME.app
+	cp -R $srcdir/src/macosx/SDLMain.nib bin/$EXECUTABLE_NAME.app
+	cp $srcdir/src/macosx/Info.plist bin/$EXECUTABLE_NAME.app "
 	fi
 	;;
     *-*-mingw32*)
@@ -3388,7 +3397,6 @@ _ACEOF
 	LDFLAGS="-lSDL -lSDLmain"
 	;;
 esac
-
 CFLAGS=$CFLAGS
 
 INCLUDES=$INCLUDES
@@ -3396,6 +3404,10 @@ INCLUDES=$INCLUDES
 LDFLAGS=$LDFLAGS
 
 LIBS=$LIBS
+
+EXTRA=$EXTRA
+
+EXECUTABLE_NAME=$EXECUTABLE_NAME
 
 OUTPUT_FORMAT=$OUTPUT_FORMAT
 
@@ -4131,12 +4143,14 @@ am__fastdepCC_TRUE!$am__fastdepCC_TRUE$ac_delim
 am__fastdepCC_FALSE!$am__fastdepCC_FALSE$ac_delim
 HOST!$HOST$ac_delim
 INCLUDES!$INCLUDES$ac_delim
+EXTRA!$EXTRA$ac_delim
+EXECUTABLE_NAME!$EXECUTABLE_NAME$ac_delim
 OUTPUT_FORMAT!$OUTPUT_FORMAT$ac_delim
 LIB@&t@OBJS!$LIB@&t@OBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 88; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 90; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
