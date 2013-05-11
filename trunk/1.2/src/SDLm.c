@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "chip8.h"
+#include "config.h"
 #include <SDL/SDL.h>
 #include "SDLm.h"
 
@@ -17,15 +18,15 @@ int main (int argc, char **argv) //<-- Esta funcion luego la cambian de nombre p
 	struct chip8_state s;
 	init(&s);										// Inicializa el estado del emulador
 	InitSDL(&screen);								// Inicia la pantalla
-	if(OpenGame(&s,argv[1])) MainSDL(&s,&screen);	// Si lo lee ejecuta el juego
+	if(OpenGame(&s,argv)) MainSDL(&s,&screen);	// Si lo lee ejecuta el juego
 	return 0;
 }
 
-int OpenGame(struct chip8_state *s, char *argv)
+int OpenGame(struct chip8_state *s, char **argv)
 {
-	if ((ptrGame=fopen(argv,"rb"))==NULL)
+	if ((ptrGame=fopen(argv[1],"rb"))==NULL)
 	{
-		printf("Can't open the file\n");
+		printf("Can't open the file\nUsage: %s <rom file>\n",argv[0]);
 		return 0;
 	}
 	else

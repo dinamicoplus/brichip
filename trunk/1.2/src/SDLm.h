@@ -7,7 +7,7 @@ Description: Encabezado de SDLm.c
 #define SDLM_H
 
 int InitSDL(SDL_Surface **screen);
-int OpenGame(struct chip8_state *s, char *argv);
+int OpenGame(struct chip8_state *s, char **argv);
 int MainSDL(struct chip8_state *s, SDL_Surface **screen);
 int putpix(int pix,int n,int m,SDL_Surface *screen);
 int drawscrn (struct chip8_state *s,SDL_Surface *screen);
