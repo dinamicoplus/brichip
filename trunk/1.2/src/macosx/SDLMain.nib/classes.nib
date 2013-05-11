@@ -5,6 +5,21 @@
 	<key>IBClasses</key>
 	<array>
 		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>performClose</key>
+				<string>id</string>
+				<key>terminate</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>SDLApplication</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSApplication</string>
+		</dict>
+		<dict>
 			<key>CLASS</key>
 			<string>FirstResponder</string>
 			<key>LANGUAGE</key>
@@ -15,21 +30,7 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
-				<key>help</key>
-				<string>id</string>
-				<key>newGame</key>
-				<string>id</string>
 				<key>openDialog</key>
-				<string>id</string>
-				<key>openFile</key>
-				<string>id</string>
-				<key>openGame</key>
-				<string>id</string>
-				<key>prefsMenu</key>
-				<string>id</string>
-				<key>saveGame</key>
-				<string>id</string>
-				<key>saveGameAs</key>
 				<string>id</string>
 			</dict>
 			<key>CLASS</key>

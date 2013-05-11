@@ -20,10 +20,10 @@ case "$host" in
 	if test x$enable_gui == xyes; then
     		AC_DEFINE([SDL_USE_NIB_FILE],[],[Use this flag to determine whether we use SDLMain.nib or not])
 		EXTRA="createapp: all
-	test -d bin/$EXECUTABLE_NAME.app || mkdir bin/$EXECUTABLE_NAME.app
-	mv bin/$EXECUTABLE_NAME bin/$EXECUTABLE_NAME.app
-	cp -R $srcdir/src/macosx/SDLMain.nib bin/$EXECUTABLE_NAME.app
-	cp $srcdir/src/macosx/Info.plist bin/$EXECUTABLE_NAME.app "
+	test -d bin/$PACKAGE.app || mkdir bin/$PACKAGE.app
+	mv bin/$EXECUTABLE_NAME bin/$PACKAGE.app
+	cp -R $srcdir/src/macosx/SDLMain.nib bin/$PACKAGE.app
+	cp $srcdir/src/macosx/Info.plist bin/$PACKAGE.app "
 	fi
 	;;
     *-*-mingw32*)

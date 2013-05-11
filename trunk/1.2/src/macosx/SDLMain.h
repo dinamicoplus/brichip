@@ -12,8 +12,13 @@
 
 @interface SDLMain : NSObject
 #ifdef SDL_USE_NIB_FILE
+
 - (IBAction) openDialog: sender; //Open a dialog to select the game
 #endif
 @end
 
+@interface SDLApplication : NSApplication
+- (void)terminate:(id)sender;
+- (void)performClose:(id)sender;
+@end
 #endif /* _SDLMain_h_ */

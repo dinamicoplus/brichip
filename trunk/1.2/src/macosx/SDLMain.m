@@ -4,14 +4,14 @@
 
     Feel free to customize this file to suit your needs
 */
-
 #include "SDL.h"
 #include "SDLMain.h"
 #include "../chip8.h"	//Attach the libraries for the emulator
 #include "../SDLm.h"	//Attach the libraries for the SDL
 #include "../config.h"
-#include <sys/param.h> /* for MAXPATHLEN */
+#include <sys/param.h>  /*for MAXPATHLEN */
 #include <unistd.h>
+#include <string.h>
 
 /* For some reaon, Apple removed setAppleMenu from the headers in 10.4,
  but the method still is there and works. To avoid warnings, we declare
@@ -41,6 +41,7 @@ static int    gArgc;
 static char  **gArgv;
 static BOOL   gFinderLaunch;
 static BOOL   gCalledAppMainline = FALSE;
+NSString *path;
 
 static NSString *getApplicationName(void)
 {
@@ -65,12 +66,20 @@ static NSString *getApplicationName(void)
 @end
 #endif
 
-@interface SDLApplication : NSApplication
-@end
 
 @implementation SDLApplication
 /* Invoked from the Quit menu item */
 - (void)terminate:(id)sender
+{
+    /* Post a SDL_QUIT event */
+    SDL_Event event;
+    event.type = SDL_QUIT;
+    SDL_PushEvent(&event);
+#ifdef SDL_USE_NIB_FILE
+	exit(0);			//If you use the nib file you must exit here
+#endif
+}
+- (void)performClose:(id)sender
 {
     /* Post a SDL_QUIT event */
     SDL_Event event;
@@ -127,10 +136,12 @@ static NSString *getApplicationName(void)
     [ aMenu sizeToFit ];
 }
 
-- (IBAction) openDialog: sender			//Implementation for the open dialog
+- (IBAction) openDialog:(id) sender			//Implementation for the open dialog
 {
 	int i; // Loop counter.
-	const char *str[2];					//Use two strings for emulate the input parameters
+	const char c[MAXPATHLEN];
+	const char *str_c[2]={&gArgc,c};					//Use two strings for emulate the input parameters
+	char *str[2];
 	
 	// Create the File Open Dialog class.
 	NSOpenPanel* openDlg = [NSOpenPanel openPanel];
@@ -152,12 +163,15 @@ static NSString *getApplicationName(void)
 		// Loop through all the files and process them.
 		for( i = 0; i < [files count]; i++ )
 		{
-			NSString* fileName = [files objectAtIndex:i];
-			str[1] = [fileName UTF8String];					//Assign to str[1] the name of the file picked
+			path = [files objectAtIndex:i];
+			str_c[1] = [path UTF8String];					//Assign to str[1] the name of the file picked
+			strcpy(str[1], str_c[1]);
 			SDL_main(1,str);								//The main function in ../SDLm.c
+			exit(0);
 			// Do something with the filename.
 		}
 	}
+
 }
 #else
 
@@ -339,7 +353,7 @@ static void CustomApplicationMain (int argc, char **argv)
 
     /* We're done, thank you for playing */
 #ifndef SDL_USE_NIB_FILE
-    exit(status);			//If you use the nib file then you delete the exit() function
+    exit(0);			//If you use the nib file then you delete the exit() function
 #endif
 }
 @end

@@ -11,7 +11,7 @@
 #include "SDLm.h"
 
 
-int main (int argc, char *argv[]) //<-- Esta funcion luego la cambian de nombre por SDL_main
+int main (int argc, char **argv) //<-- Esta funcion luego la cambian de nombre por SDL_main
 {
 	SDL_Surface *screen;
 	struct chip8_state s;
@@ -50,13 +50,13 @@ int InitSDL(SDL_Surface **screen)
 	if (SDL_Init(SDL_INIT_VIDEO)<0)
 	{
 		printf("No se pudo iniciar SDL: %s\n", SDL_GetError());
-		exit(1);
+		exit(0);
 	}
 	*screen=SDL_SetVideoMode(640,320, 8, SDL_HWSURFACE);
 	if (*screen == NULL) 
 	{
 		printf("No se puede inicializar el modo gráfico: %s\n",SDL_GetError());
-		exit(1);
+		exit(0);
 	}
 	return 0;
 }	
