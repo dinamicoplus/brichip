@@ -30,9 +30,11 @@ case "$host" in
 	LDFLAGS="-lSDL"
 	LIBS="$srcdir/src/win/SDL_win32_main.c"
 	OUTPUT_FORMAT=".exe"
+	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 	;;
     *)
 	LDFLAGS="-lSDL -lSDLmain"
+	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 	;;
 esac
 AC_SUBST([CFLAGS],[$CFLAGS])
