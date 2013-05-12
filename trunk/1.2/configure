@@ -3369,7 +3369,7 @@ case "$host" in
 	CFLAGS="-ObjC"
 	LDFLAGS="-framework Cocoa"
 	LIBS="$srcdir/lib/$SYSTEM/*.dylib"
-	SOURCES="$srcdir/src/macosx/*.m"
+	SOURCES="$srcdir/src/$SYSTEM/*.m"
 	AUX="$srcdir/src/macosx/Info.plist:$srcdir/src/macosx/Info.plist.in"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 
@@ -3408,9 +3408,10 @@ _ACEOF
 	;;
 esac
 
-SOURCES="$srcdir/src/*.c $SOURCES"
-LDFLAGS="-L$srcdir/lib $LDFLAGS"
-INCLUDES="-Iinclude -I$srcdir/include $INCLUDES"
+SOURCES=`echo $srcdir/src/*.c $SOURCES`
+LDFLAGS=`echo L$srcdir/lib $LDFLAGS`
+INCLUDES=`echo -Iinclude -I$srcdir/include $INCLUDES`
+LIBS=`echo LIBS`
 
 OBJECTS=`echo $SOURCES | sed 's/\.c/\.o/g'`
 OBJECTS=`echo $OBJECTS | sed 's/\.m/\.o/g'`
