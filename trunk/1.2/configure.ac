@@ -6,16 +6,13 @@ AM_INIT_AUTOMAKE([foreign])	#idem
 AC_PROG_CC			#verifica si existe gcc
 AC_SUBST([HOST],[$host])	#sustituye Host por el host encontrado
 
-SOURCES="$SOURCES $srcdir/src/*.c"
 case "$host" in
     *-*-darwin*)		#si es MacOSX...
 	SYSTEM="macosx"
 	CFLAGS="-ObjC"
-	INCLUDES="-I$srcdir/include"
 	LDFLAGS="-framework Cocoa"
-	LIBS="$srcdir/lib/libSDL-1.2.0.dylib"
-	
-	SOURCES="$SOURCES $srcdir/src/macosx/*.m"
+	LIBS="$srcdir/lib/$SYSTEM/*.dylib"
+	SOURCES="$srcdir/src/macosx/*.m"
 	AUX="$srcdir/src/macosx/Info.plist:$srcdir/src/macosx/Info.plist.in"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 
@@ -34,9 +31,8 @@ case "$host" in
     *-*-mingw32*)
 	SYSTEM="win"
 	LDFLAGS="-lSDL"
-	INCLUDES="-I$srcdir/include -L$srcdir/lib"
-	SOURCES="$SOURCES $srcdir/src/win/SDL_win32_main.c"
-	LIBS="$srcidr/lib/user32.lib $srcdir/lib/comdlg32.lib"
+	SOURCES="$srcdir/src/$SYSTEM/*.c"
+	LIBS="$srcidr/lib/$SYSTEM/*.lib"
 	OUTPUT_FORMAT=".exe"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 	;;
@@ -46,6 +42,10 @@ case "$host" in
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 	;;
 esac
+
+SOURCES="$srcdir/src/*.c $SOURCES"
+LDFLAGS="-L$srcdir/lib $LDFLAGS"
+INCLUDES="-Iinclude -I$srcdir/include $INCLUDES"
 
 OBJECTS=`echo $SOURCES | sed 's/\.c/\.o/g'`
 OBJECTS=`echo $OBJECTS | sed 's/\.m/\.o/g'`
