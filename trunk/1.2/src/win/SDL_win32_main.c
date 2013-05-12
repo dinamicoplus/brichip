@@ -8,7 +8,9 @@
 #include <stdlib.h>
 
 #define WIN32_LEAN_AND_MEAN
+#define USE_MESSAGEBOX
 #include <windows.h>
+#include <commdlg.h>
 
 #ifdef _WIN32_WCE
 # define DIR_SEPERATOR TEXT("\\")
@@ -27,6 +29,7 @@
 /* Include the SDL main definition header */
 #include <SDL/SDL.h>
 #include <SDL/SDL_main.h>
+#include <SDL/SDL_syswm.h>
 
 #ifdef main
 # ifndef _WIN32_WCE_EMULATION
@@ -38,7 +41,7 @@
 #define STDOUT_FILE	TEXT("stdout.txt")
 #define STDERR_FILE	TEXT("stderr.txt")
 
-#define NO_STDIO_REDIRECT
+//#define NO_STDIO_REDIRECT
 
 #ifndef NO_STDIO_REDIRECT
   #ifdef _WIN32_WCE
@@ -279,6 +282,45 @@ static void redirect_output(void)
 #define console_main main
 #endif
 
+int OpenFileSDL(char **argv)
+{
+	HWND hWnd = NULL;
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	if( SDL_GetWMInfo(&wmInfo) ) {
+		hWnd = wmInfo.window; // Note: This is sucessful, and hWnd != NULL
+	}	
+	
+	OPENFILENAMEW ofn;
+	wchar_t fileName[MAX_PATH] = L"";
+	ZeroMemory(&ofn, sizeof(ofn));
+	
+	ofn.lStructSize = sizeof(OPENFILENAME);
+		ofn.hwndOwner = hWnd;
+	ofn.lpstrFile = fileName;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST;
+	
+	if( GetOpenFileNameW( &ofn ) ) 
+	{
+		char *arg = (char *) SDL_malloc(MAX_PATH);
+		char *arg1 = (char *) SDL_malloc(MAX_PATH);
+
+		strcpy(arg, argv[0]);
+		wcstombs(arg1,fileName,MAX_PATH);
+		
+		char **newargv = (char **) realloc(argv, sizeof (char *) *  2);
+		if (newargv == NULL)
+		{
+			SDL_free(arg);
+			return 0;
+		}
+		argv = newargv;
+		argv[0] = arg;
+		argv[1] = arg1;
+		return 1;
+	}
+}
 /* This is where execution begins [console apps] */
 int console_main(int argc, char *argv[])
 {
@@ -323,14 +365,16 @@ int console_main(int argc, char *argv[])
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
 
 	/* Run the application main() code */
-	status = SDL_main(argc, argv);
 
+	OpenFileSDL(argv);
+	status = SDL_main(argc, argv);
 	/* Exit cleanly, calling atexit() functions */
 	exit(status);
 
 	/* Hush little compiler, don't you cry... */
 	return 0;
 }
+
 
 /* This is where execution begins [windowed apps] */
 #ifdef _WIN32_WCE
@@ -404,7 +448,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw)
 		return OutOfMemory();
 	}
 	ParseCommandLine(cmdline, argv);
-
+	
 	/* Run the main program (after a little SDL initialization) */
 	console_main(argc, argv);
 

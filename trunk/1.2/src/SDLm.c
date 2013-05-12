@@ -6,9 +6,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <SDL/SDL.h>
 #include "chip8.h"
 #include "config.h"
-#include <SDL/SDL.h>
 #include "SDLm.h"
 
 
@@ -18,6 +18,7 @@ int main (int argc, char **argv) //<-- Esta funcion luego la cambian de nombre p
 	struct chip8_state s;
 	init(&s);										// Inicializa el estado del emulador
 	InitSDL(&screen);								// Inicia la pantalla
+	SDL_WM_SetCaption(PACKAGE_STRING, "");
 	if(OpenGame(&s,argv)) MainSDL(&s,&screen);	// Si lo lee ejecuta el juego
 	return 0;
 }
