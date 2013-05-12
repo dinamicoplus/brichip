@@ -7,9 +7,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL/SDL.h>
-#include "chip8.h"
-#include "config.h"
-#include "SDLm.h"
+#include <chip8.h>
+#include <SDLm.h>
+#include <config.h>
 
 
 int main (int argc, char **argv) //<-- Esta funcion luego la cambian de nombre por SDL_main

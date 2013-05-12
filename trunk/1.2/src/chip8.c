@@ -5,7 +5,7 @@
  **************************************************************************************/
 #include <stdio.h>
 #include <time.h>
-#include "chip8.h"
+#include <chip8.h>
 
 int exec (struct chip8_state *s)
 {

@@ -8,7 +8,7 @@ AC_SUBST([HOST],[$host])	#sustituye Host por el host encontrado
 case "$host" in
     *-*-darwin*)		#si es MacOSX...
 	CFLAGS="-ObjC"
-	INCLUDES="-Iinclude -I$srcdir/src/macox"
+	INCLUDES="-Iinclude"
 	LDFLAGS="-framework Cocoa"
 	LIBS="$srcdir/lib/libSDL-1.2.0.dylib $srcdir/src/macosx/SDLmain.m"
 	AUX="src/macosx/Info.plist:src/macosx/Info.plist.in"
@@ -28,6 +28,7 @@ case "$host" in
 	;;
     *-*-mingw32*)
 	LDFLAGS="-lSDL"
+	INCLUDES="-Iinclude"
 	LIBS="$srcdir/src/win/SDL_win32_main.c"
 	OUTPUT_FORMAT=".exe"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"

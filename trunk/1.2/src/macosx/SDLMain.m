@@ -4,11 +4,11 @@
 
     Feel free to customize this file to suit your needs
 */
-#include "SDL.h"
-#include "SDLMain.h"
-#include "../chip8.h"	//Attach the libraries for the emulator
-#include "../SDLm.h"	//Attach the libraries for the SDL
-#include "../config.h"
+#include <SDL.h>
+#include <SDLMain.h>
+#include <chip8.h>	//Attach the libraries for the emulator
+#include <SDLm.h>	//Attach the libraries for the SDL
+#include <config.h>
 #include <sys/param.h>  /*for MAXPATHLEN */
 #include <unistd.h>
 #include <string.h>
