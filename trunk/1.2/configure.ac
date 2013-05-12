@@ -5,13 +5,17 @@ AC_CANONICAL_HOST		#Necesario para averiguar el host
 AM_INIT_AUTOMAKE([foreign])	#idem
 AC_PROG_CC			#verifica si existe gcc
 AC_SUBST([HOST],[$host])	#sustituye Host por el host encontrado
+
+SOURCES="$SOURCES $srcdir/src/*.c"
 case "$host" in
     *-*-darwin*)		#si es MacOSX...
 	CFLAGS="-ObjC"
-	INCLUDES="-Iinclude"
+	INCLUDES="-I$srcdir/include"
 	LDFLAGS="-framework Cocoa"
-	LIBS="$srcdir/lib/libSDL-1.2.0.dylib $srcdir/src/macosx/SDLmain.m"
-	AUX="src/macosx/Info.plist:src/macosx/Info.plist.in"
+	LIBS="$srcdir/lib/libSDL-1.2.0.dylib"
+	
+	SOURCES="$SOURCES $srcdir/src/macosx/*.m"
+	AUX="$srcdir/src/macosx/Info.plist:$srcdir/src/macosx/Info.plist.in"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 
 	AC_ARG_ENABLE(gui,
@@ -28,8 +32,9 @@ case "$host" in
 	;;
     *-*-mingw32*)
 	LDFLAGS="-lSDL"
-	INCLUDES="-Iinclude"
-	LIBS="$srcdir/src/win/SDL_win32_main.c"
+	INCLUDES="-I$srcdir/include -L$srcdir/lib"
+	SOURCES="$SOURCES $srcdir/src/win/SDL_win32_main.c"
+	LIBS="$srcidr/lib/user32.lib $srcdir/lib/comdlg32.lib"
 	OUTPUT_FORMAT=".exe"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 	;;
@@ -38,6 +43,13 @@ case "$host" in
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 	;;
 esac
+
+OBJECTS=`echo $SOURCES | sed 's,[[^ ]]*/\([[ ]]*\)\.c,$(objects)/\1.o,g'`
+OBJECTS=`echo $SOURCES | sed 's,[[^ ]]*/\([[ ]]*\)\.m,$(objects)/\1.o,g'`
+
+
+AC_SUBST([SOURCES],[$SOURCES])
+AC_SUBST([OBJECTS],[$OBJECTS])
 AC_SUBST([CFLAGS],[$CFLAGS])
 AC_SUBST([INCLUDES],[$INCLUDES])
 AC_SUBST([LDFLAGS],[$LDFLAGS])

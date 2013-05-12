@@ -6,12 +6,18 @@ CFLAGS=@CFLAGS@
 LDFLAGS=@LDFLAGS@
 INCLUDES=@INCLUDES@
 LIBS=@LIBS@
+
+SOURCES=@SOURCES@
+OBJECTS=@OBJECTS@
 OUTPUT_FORMAT=@OUTPUT_FORMAT@
 EXECUTABLE_NAME=@EXECUTABLE_NAME@
 
-all:
+all: $(OBJECTS)
 	test -d bin || mkdir bin
-	gcc $(CFLAGS) $(INCLUDES) -o bin/$(EXECUTABLE_NAME) $(srcdir)/src/SDLm.c $(srcdir)/src/chip8.c $(LIBS) $(LDFLAGS)
+	gcc -o bin/$(EXECUTABLE_NAME) $(OBJECTS) $(LIBS) $(LDFLAGS)
+
+$(OBJECTS):
+	gcc $(CFLAGS) $(INCLUDES) -o $(OBJECTS) -c $(SOURCES)
 
 clean:
 	rm -r bin
