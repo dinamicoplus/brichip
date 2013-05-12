@@ -9,6 +9,7 @@ AC_SUBST([HOST],[$host])	#sustituye Host por el host encontrado
 SOURCES="$SOURCES $srcdir/src/*.c"
 case "$host" in
     *-*-darwin*)		#si es MacOSX...
+	SYSTEM="macosx"
 	CFLAGS="-ObjC"
 	INCLUDES="-I$srcdir/include"
 	LDFLAGS="-framework Cocoa"
@@ -31,6 +32,7 @@ case "$host" in
 	fi
 	;;
     *-*-mingw32*)
+	SYSTEM="win"
 	LDFLAGS="-lSDL"
 	INCLUDES="-I$srcdir/include -L$srcdir/lib"
 	SOURCES="$SOURCES $srcdir/src/win/SDL_win32_main.c"
@@ -39,15 +41,16 @@ case "$host" in
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 	;;
     *)
+	SYSTEM="linux"
 	LDFLAGS="-lSDL -lSDLmain"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 	;;
 esac
 
-OBJECTS=`echo $SOURCES | sed 's,[[^ ]]*/\([[ ]]*\)\.c,$(objects)/\1.o,g'`
-OBJECTS=`echo $SOURCES | sed 's,[[^ ]]*/\([[ ]]*\)\.m,$(objects)/\1.o,g'`
+OBJECTS=`echo $SOURCES | sed 's/\.c/\.o/g'`
+OBJECTS=`echo $OBJECTS | sed 's/\.m/\.o/g'`
 
-
+AC_SUBST([SYSTEM],[$SYSTEM])
 AC_SUBST([SOURCES],[$SOURCES])
 AC_SUBST([OBJECTS],[$OBJECTS])
 AC_SUBST([CFLAGS],[$CFLAGS])

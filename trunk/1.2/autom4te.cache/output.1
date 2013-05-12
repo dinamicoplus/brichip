@@ -663,6 +663,9 @@ CCDEPMODE
 am__fastdepCC_TRUE
 am__fastdepCC_FALSE
 HOST
+SYSTEM
+SOURCES
+OBJECTS
 INCLUDES
 EXTRA
 EXECUTABLE_NAME
@@ -3359,13 +3362,18 @@ fi
 			#verifica si existe gcc
 HOST=$host
 	#sustituye Host por el host encontrado
+
+SOURCES="$SOURCES $srcdir/src/*.c"
 case "$host" in
     *-*-darwin*)		#si es MacOSX...
+	SYSTEM="macosx"
 	CFLAGS="-ObjC"
-	INCLUDES="-Iinclude"
+	INCLUDES="-I$srcdir/include"
 	LDFLAGS="-framework Cocoa"
-	LIBS="$srcdir/lib/libSDL-1.2.0.dylib $srcdir/src/macosx/SDLmain.m"
-	AUX="src/macosx/Info.plist:src/macosx/Info.plist.in"
+	LIBS="$srcdir/lib/libSDL-1.2.0.dylib"
+	
+	SOURCES="$SOURCES $srcdir/src/macosx/*.m"
+	AUX="$srcdir/src/macosx/Info.plist:$srcdir/src/macosx/Info.plist.in"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 
 	# Check whether --enable-gui was given.
@@ -3389,17 +3397,30 @@ _ACEOF
 	fi
 	;;
     *-*-mingw32*)
+	SYSTEM="win"
 	LDFLAGS="-lSDL"
-	INCLUDES="-Iinclude"
-	LIBS="$srcdir/src/win/SDL_win32_main.c"
+	INCLUDES="-I$srcdir/include -L$srcdir/lib"
+	SOURCES="$SOURCES $srcdir/src/win/SDL_win32_main.c"
+	LIBS="$srcidr/lib/user32.lib $srcdir/lib/comdlg32.lib"
 	OUTPUT_FORMAT=".exe"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 	;;
     *)
+	SYSTEM="linux"
 	LDFLAGS="-lSDL -lSDLmain"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
 	;;
 esac
+
+OBJECTS=`echo $SOURCES | sed 's/\.c/\.o/g'`
+OBJECTS=`echo $OBJECTS | sed 's/\.m/\.o/g'`
+
+SYSTEM=$SYSTEM
+
+SOURCES=$SOURCES
+
+OBJECTS=$OBJECTS
+
 CFLAGS=$CFLAGS
 
 INCLUDES=$INCLUDES
@@ -4145,6 +4166,9 @@ CCDEPMODE!$CCDEPMODE$ac_delim
 am__fastdepCC_TRUE!$am__fastdepCC_TRUE$ac_delim
 am__fastdepCC_FALSE!$am__fastdepCC_FALSE$ac_delim
 HOST!$HOST$ac_delim
+SYSTEM!$SYSTEM$ac_delim
+SOURCES!$SOURCES$ac_delim
+OBJECTS!$OBJECTS$ac_delim
 INCLUDES!$INCLUDES$ac_delim
 EXTRA!$EXTRA$ac_delim
 EXECUTABLE_NAME!$EXECUTABLE_NAME$ac_delim
@@ -4153,7 +4177,7 @@ LIB@&t@OBJS!$LIB@&t@OBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 90; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 93; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

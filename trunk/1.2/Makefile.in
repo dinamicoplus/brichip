@@ -1,6 +1,7 @@
 TARGET=@PACKAGE_NAME@
 VERSION=@PACKAGE_VERSION@
 HOST=@HOST@
+SYSTEM=@SYSTEM@
 srcdir=@srcdir@
 CFLAGS=@CFLAGS@
 LDFLAGS=@LDFLAGS@
@@ -12,13 +13,18 @@ OBJECTS=@OBJECTS@
 OUTPUT_FORMAT=@OUTPUT_FORMAT@
 EXECUTABLE_NAME=@EXECUTABLE_NAME@
 
-all: $(OBJECTS)
-	test -d bin || mkdir bin
-	gcc -o bin/$(EXECUTABLE_NAME) $(OBJECTS) $(LIBS) $(LDFLAGS)
+all: $(SOURCES) $(EXECUTABLE_NAME)
 
-$(OBJECTS):
-	gcc $(CFLAGS) $(INCLUDES) -o $(OBJECTS) -c $(SOURCES)
+$(EXECUTABLE_NAME): $(OBJECTS)
+	test -d bin || mkdir bin
+	gcc -o bin/$(EXECUTABLE_NAME) $(OBJECTS) $(LDFLAGS) $(LIBS)
+.c.o:
+	gcc $(CFLAGS) $(INCLUDES) -c $< -o $@
+.m.o:
+	gcc $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	rm -r bin
+	rm src/*.o
+	rm src/$(SYSTEM)/*.o
 @EXTRA@
