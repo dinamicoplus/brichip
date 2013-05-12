@@ -3362,7 +3362,7 @@ HOST=$host
 case "$host" in
     *-*-darwin*)		#si es MacOSX...
 	CFLAGS="-ObjC"
-	INCLUDES="-Iinclude -I$srcdir/src/macox"
+	INCLUDES="-Iinclude"
 	LDFLAGS="-framework Cocoa"
 	LIBS="$srcdir/lib/libSDL-1.2.0.dylib $srcdir/src/macosx/SDLmain.m"
 	AUX="src/macosx/Info.plist:src/macosx/Info.plist.in"
@@ -3390,6 +3390,7 @@ _ACEOF
 	;;
     *-*-mingw32*)
 	LDFLAGS="-lSDL"
+	INCLUDES="-Iinclude"
 	LIBS="$srcdir/src/win/SDL_win32_main.c"
 	OUTPUT_FORMAT=".exe"
 	EXECUTABLE_NAME="$PACKAGE-$VERSION$OUTPUT_FORMAT"
@@ -3415,7 +3416,7 @@ OUTPUT_FORMAT=$OUTPUT_FORMAT
 
 ac_config_files="$ac_config_files Makefile:Makefile.in $AUX"
 
-ac_config_headers="$ac_config_headers src/config.h"
+ac_config_headers="$ac_config_headers include/config.h"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3997,7 +3998,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile:Makefile.in" ;;
     "$AUX") CONFIG_FILES="$CONFIG_FILES $AUX" ;;
-    "src/config.h") CONFIG_HEADERS="$CONFIG_HEADERS src/config.h" ;;
+    "include/config.h") CONFIG_HEADERS="$CONFIG_HEADERS include/config.h" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
